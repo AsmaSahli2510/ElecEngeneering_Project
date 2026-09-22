@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-Process node, msedge -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='msedge.exe' or Name='node.exe'\" | Select-Object ProcessId, @{n='Cmd';e={$_.CommandLine.Substring\\(0,[Math]::Min\\(150,$_.CommandLine.Length\\)\\)}} | Format-List | Out-String -Width 220)",
+      "Bash(sed -i '2s/.*/const { Cabinet, CableCalculation, Feeder, HistoryEvent } = require\\(\"..\\\\/models\"\\);/' controllers/feederCalculationController.js)",
+      "Bash(sed -i '84s/.*/    await CableCalculation.deleteOne\\({ feederId: feeder._id }\\);\\\\n    await HistoryEvent.deleteOne\\({ key: `feeder:${feeder._id}` }\\);/' controllers/feederCalculationController.js)",
+      "Bash(node --check controllers/feederCalculationController.js)",
+      "Bash(node -e ' *)",
+      "Bash(sed -i 's#from \"./fields.jsx\"#from \"../ui/fields.jsx\"#' components/calculation/*.jsx)",
+      "Bash(sed -i 's#from \"../ui/FormField.jsx\"#from \"./FormField.jsx\"#' components/ui/fields.jsx)",
+      "Bash(npm install *)",
+      "Bash(sed -i \"/^export { Link }$/d\" AssetPage.jsx)",
+      "Bash(sed -i \"s/import { Link, useLocation, useParams } from 'react-router-dom'/import { useLocation, useParams } from 'react-router-dom'/\" AssetPage.jsx)",
+      "Bash(sed -i 's/function Notice\\({ tone = \"info\", title, children, actions, className = \"\" }\\) {/function Notice\\({ tone = \"info\", title, children, actions, className = \"\", ...rest }\\) {/' Notice.jsx)",
+      "Bash(sed -i 's/      role={tone === \"error\" ? \"alert\" : \"status\"}>/      role={tone === \"error\" ? \"alert\" : \"status\"}\\\\n      {...rest}>/' Notice.jsx)"
+    ]
+  }
+}

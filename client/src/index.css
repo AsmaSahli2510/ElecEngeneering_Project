@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-secondary: #0051d5;
+  --color-secondary-container: #316bf3;
+  --color-primary: #000000;
+  --color-primary-container: #131b2e;
+  --color-tertiary-container: #001f28;
+  --color-background: #f8f9ff;
+  --color-surface: #f8f9ff;
+  --color-surface-variant: #d3e4fe;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-bright: #f8f9ff;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #45464d;
+  --color-on-primary-container: #7c839b;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #fefcff;
+  --color-on-secondary-fixed: #00174b;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-secondary-fixed: #dbe1ff;
+  --color-secondary-fixed-dim: #b4c5ff;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-tertiary-container: #0090af;
+  --color-tertiary-fixed: #b6ebff;
+  --color-inverse-surface: #213145;
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --font-body-md: "Inter", sans-serif;
+  --font-body-sm: "Inter", sans-serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-headline-lg: "Inter", sans-serif;
+  --font-headline-md: "Inter", sans-serif;
+  --font-headline-sm: "Inter", sans-serif;
+  --font-label-caps: "Inter", sans-serif;
+  --font-tech-data-xl: "JetBrains Mono", monospace;
+  --font-tech-data-lg: "JetBrains Mono", monospace;
+  --font-tech-data-md: "JetBrains Mono", monospace;
+  --font-tech-unit: "JetBrains Mono", monospace;
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: 22px;
+  --text-body-md: 13px;
+  --text-body-md--line-height: 18px;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 16px;
+  --text-headline-lg: 30px;
+  --text-headline-lg--line-height: 36px;
+  --text-headline-md: 22px;
+  --text-headline-md--line-height: 28px;
+  --text-headline-sm: 18px;
+  --text-headline-sm--line-height: 24px;
+  --text-label-caps: 10px;
+  --text-label-caps--line-height: 12px;
+  --text-tech-data-xl: 26px;
+  --text-tech-data-xl--line-height: 30px;
+  --text-tech-data-lg: 18px;
+  --text-tech-data-lg--line-height: 22px;
+  --text-tech-data-md: 14px;
+  --text-tech-data-md--line-height: 18px;
+  --text-tech-unit: 11px;
+  --text-tech-unit--line-height: 14px;
+  --spacing-space-2xs: 0.125rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-space-lg: 1rem;
+  --spacing-space-xl: 1.5rem;
+  --spacing-space-2xl: 2rem;
+  --radius-default: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { min-width: 320px; min-height: 100vh; background: #f8f9ff; color: #0b1c30; font-family: "Inter", sans-serif; }
+  button, input, select { font: inherit; }
+  input, select, textarea {
+    min-height: 2.5rem;
+    border-radius: 0.5rem;
+    background: #eff4ff;
+    color: #0b1c30;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(11, 28, 48, 0.04);
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(0, 81, 213, 0.3);
+  }
+  input[type="number"], input[type="date"] { font-family: "JetBrains Mono", monospace; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+}
+
+#root { min-height: 100vh; }

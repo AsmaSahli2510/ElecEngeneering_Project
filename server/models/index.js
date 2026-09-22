@@ -1,0 +1,17 @@
+module.exports = {
+  Project: require("./Project"),
+  Cabinet: require("./Cabinet"),
+  Feeder: require("./Feeder"),
+  CableCalculation: require("./CableCalculation"),
+  PowerBalance: require("./PowerBalance"),
+  MainFeeder: require("./MainFeeder"),
+  Component: require("./Component"),
+  BOMItem: require("./BOMItem"),
+  Quotation: require("./Quotation"),
+  Installation: require("./Installation"),
+  Asset: require("./Asset"),
+  Maintenance: require("./Maintenance"),
+  Ticket: require("./Ticket"),
+  HistoryEvent: require("./HistoryEvent"),
+  Counter: require("./Counter"),
+};
