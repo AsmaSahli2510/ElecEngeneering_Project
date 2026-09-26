@@ -10,7 +10,7 @@
 //      Chauffage : + contacteur
 //  - Armoire : rail DIN, bornes de terre (une par départ + une), kit d'accessoires.
 
-import { suggestRating } from "../protection.js";
+import { suggestBreakerRating, suggestRating } from "../protection.js";
 import { catalogue, DEFAULT_BREAKING_CAPACITY_KA, DEVICES_PER_DIN_RAIL, RCD_RATINGS_A } from "./catalogue.js";
 
 export const BOM_CATEGORIES = ["Protection", "Câble", "Disjoncteur", "Interrupteur", "Contacteur", "Bornier", "Rail DIN", "Accessoire", "Composant de commande"];
@@ -70,7 +70,7 @@ export function generateBom({ feeders, calculations, mainFeeder }) {
     const ref = feeder.reference;
     const current = result.designCurrent;
     const poles = inputs.circuit.circuitType === "Triphasé" ? 3 : 2;
-    const rating = suggestRating(current);
+    const rating = suggestBreakerRating(current, inputs.load.loadType);
     const requiredIcuKa = Number.isFinite(result.shortCircuit?.breakingCapacityKa) ? result.shortCircuit.breakingCapacityKa : DEFAULT_BREAKING_CAPACITY_KA;
     const tag = `${ref} — `;
 

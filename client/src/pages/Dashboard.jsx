@@ -1,6 +1,4 @@
 import DashboardWidgets from "../components/dashboard/DashboardWidgets.jsx";
-import LoadMonitor from "../components/dashboard/LoadMonitor.jsx";
-import MetricCard from "../components/dashboard/MetricCard.jsx";
 import QuickSizing from "../components/dashboard/QuickSizing.jsx";
 import RecentProjects from "../components/dashboard/RecentProjects.jsx";
 import { useNavigate } from "react-router-dom";
@@ -45,54 +43,6 @@ function Dashboard() {
           </button>
         </div>
       </section>
-
-      <section className="grid grid-cols-1 gap-space-sm sm:grid-cols-2 lg:grid-cols-5">
-        <MetricCard
-          label="Active Studies"
-          icon="account_tree"
-          value={m(data?.activeProjects ?? 0)}
-          unit="PRJ"
-          footer="Total Projects"
-          footerValue={`${m(data?.projectsTotal ?? 0)} total`}
-        />
-        <MetricCard
-          label="Cabinets Dimensioned"
-          icon="developer_board"
-          iconTone="text-on-tertiary-container"
-          value={m(data?.cabinetsTotal ?? 0)}
-          unit="UNITS"
-          footer="Active Projects"
-          footerValue={`${m(data?.activeProjects ?? 0)} en cours`}
-        />
-        <MetricCard
-          label="Assets Under Norm"
-          icon="verified"
-          value={m(data?.assetsTotal ?? 0)}
-          unit="COMMISSIONED"
-          footer="En service"
-          footerValue={`${m(data?.commissionedAssets ?? 0)} / ${m(data?.assetsTotal ?? 0)}`}
-        />
-        <MetricCard
-          label="Open Diagnostics"
-          icon="notification_important"
-          iconTone="text-error"
-          value={m(data?.openTickets ?? 0)}
-          unit="TICKETS"
-          footer={`${m(data?.highPriorityOpenTickets ?? 0)} High Priority`}
-          footerValue="⚠"
-          alert={Boolean(data?.openTickets)}
-        />
-        <MetricCard
-          label="Preventive GMAO"
-          icon="calendar_clock"
-          value={m(data?.maintenanceTotal ?? 0)}
-          unit="SCHEDULED"
-          footer="Due ≤ 7 Days"
-          footerValue={`${m(data?.maintenanceDueSoon ?? 0)} items`}
-        />
-      </section>
-
-      <LoadMonitor />
 
       <section className="grid grid-cols-1 items-start gap-space-lg xl:grid-cols-12">
         <div className="flex flex-col gap-space-md xl:col-span-8">

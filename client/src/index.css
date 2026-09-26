@@ -81,16 +81,46 @@
   --radius-full: 0.75rem;
 }
 
+/* Mode sombre : redéfinit les mêmes jetons de couleur sous .dark (posée sur <html>). Les
+   utilitaires Tailwind (bg-surface, text-on-surface, ...) compilent vers var(--color-*),
+   donc toute l'app bascule sans qu'aucun composant n'ait besoin de classes dark: dédiées. */
+:root.dark {
+  --color-background: #0a0e17;
+  --color-surface: #0a0e17;
+  --color-surface-variant: #1c2740;
+  --color-surface-dim: #060a12;
+  --color-surface-container-low: #131a2b;
+  --color-surface-container: #182236;
+  --color-surface-container-high: #202c45;
+  --color-surface-container-highest: #283553;
+  --color-surface-container-lowest: #10182b;
+  --color-surface-bright: #182236;
+  --color-on-surface: #e7ecf7;
+  --color-on-surface-variant: #9aa4bb;
+  --color-outline: #5b6478;
+  --color-outline-variant: #2a3348;
+  --color-inverse-surface: #d7dee8;
+  --color-error-container: #5c1a1a;
+  --color-on-error-container: #ffb4ab;
+}
+
 @layer base {
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  body { min-width: 320px; min-height: 100vh; background: #f8f9ff; color: #0b1c30; font-family: "Inter", sans-serif; }
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--color-background);
+    color: var(--color-on-surface);
+    font-family: "Inter", sans-serif;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
   button, input, select { font: inherit; }
   input, select, textarea {
     min-height: 2.5rem;
     border-radius: 0.5rem;
-    background: #eff4ff;
-    color: #0b1c30;
+    background: var(--color-surface-container-low);
+    color: var(--color-on-surface);
     font-family: "Inter", sans-serif;
     font-size: 13px;
     line-height: 18px;
@@ -99,7 +129,7 @@
     transition: background-color 150ms ease, box-shadow 150ms ease;
   }
   input:focus, select:focus, textarea:focus {
-    background: #ffffff;
+    background: var(--color-surface-container-lowest);
     box-shadow: 0 0 0 2px rgba(0, 81, 213, 0.3);
   }
   input[type="number"], input[type="date"] { font-family: "JetBrains Mono", monospace; }

@@ -37,13 +37,11 @@ function ProjectToolbar({ view, onViewChange, onNewProject }) {
         <span>Exporter (.xlsx)</span>
       </Button>
       <Button
-        className="flex h-10 items-center gap-space-xs rounded-lg px-space-lg font-headline-sm text-headline-sm"
+        className="flex h-9 items-center gap-space-xs rounded-lg px-space-md font-tech-data-md text-tech-data-md"
         onClick={onNewProject}
         type="button">
-        <span className="material-symbols-outlined text-[20px]">
-          add_circle
-        </span>
-        <span>+ Nouveau Projet</span>
+        <span className="material-symbols-outlined text-[18px]">add</span>
+        <span>Nouveau Projet</span>
       </Button>
     </div>
   );

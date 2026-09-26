@@ -4,7 +4,6 @@ import ImportBanner from "../components/projects/ImportBanner.jsx";
 import Pagination from "../components/projects/Pagination.jsx";
 import ProjectFilters from "../components/projects/ProjectFilters.jsx";
 import ProjectHeader from "../components/projects/ProjectHeader.jsx";
-import ProjectKpiCard from "../components/projects/ProjectKpiCard.jsx";
 import ProjectTable from "../components/projects/ProjectTable.jsx";
 import ProjectToolbar from "../components/projects/ProjectToolbar.jsx";
 import { PROJECT_STATUS_LABELS } from "../domain/lifecycle/labels.js";
@@ -74,17 +73,10 @@ function Projects() {
   );
 
   const studiesCount = projects.filter((project) => project.status === "active").length;
-  const draftCount = projects.filter((project) => project.status === "draft").length;
   const quoteCount = projects.filter((project) =>
     ["bom", "quotation"].includes(project.currentStep?.key),
   ).length;
   const installedCount = projects.filter((project) => project.status === "completed").length;
-  const issuesCount = projects.filter((project) => project.currentStep?.issue).length;
-  const avgProgress = projects.length
-    ? Math.round(
-        projects.reduce((sum, project) => sum + project.normativeProgress, 0) / projects.length,
-      )
-    : 0;
 
   const resetFilters = () => {
     setSearch("");
@@ -106,44 +98,6 @@ function Projects() {
         onViewChange={setView}
         view={view}
       />
-      <div className="mb-space-lg grid grid-cols-1 gap-space-md md:grid-cols-2 xl:grid-cols-4">
-        <ProjectKpiCard
-          detail={`${draftCount} en initialisation`}
-          icon="architecture"
-          label="Bureau d'Études"
-          progress={avgProgress}
-          suffix="projets en cours"
-          title="Études Actives"
-          value={String(studiesCount)}
-        />
-        <ProjectKpiCard
-          alert={issuesCount > 0 ? `${issuesCount} alerte(s) de conformité` : undefined}
-          detail={issuesCount > 0 ? undefined : "Aucune alerte en cours"}
-          icon="verified_user"
-          label="Cycle de Vie"
-          suffix="étapes terminées (moy.)"
-          title="Avancement Normatif"
-          value={`${avgProgress}%`}
-        />
-        <ProjectKpiCard
-          detail="Nomenclature ou devis en attente"
-          icon="request_quote"
-          label="Devis & Approvisionnement"
-          suffix="projets en chiffrage"
-          title="Chiffrage & BOM"
-          tone="alt"
-          value={String(quoteCount)}
-        />
-        <ProjectKpiCard
-          detail="Suivi maintenance & tickets actif"
-          icon="qr_code_scanner"
-          label="Exploitation Site"
-          suffix="projets en exploitation"
-          title="Installés & GMAO"
-          tone="alt"
-          value={String(installedCount)}
-        />
-      </div>
       <ProjectFilters
         clientFilter={clientFilter}
         clients={clients}

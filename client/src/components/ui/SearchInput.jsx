@@ -1,4 +1,4 @@
-function SearchInput({ value, onChange, placeholder, className = "" }) {
+function SearchInput({ value, onChange, placeholder, className = "", ...rest }) {
   return (
     <div className={`relative ${className}`}>
       <span className="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">
@@ -10,6 +10,7 @@ function SearchInput({ value, onChange, placeholder, className = "" }) {
         onChange={onChange}
         placeholder={placeholder}
         type="search"
+        {...rest}
       />
       <span className="absolute right-space-md top-1/2 -translate-y-1/2 rounded bg-surface-container px-space-xs py-space-2xs font-tech-unit text-tech-unit text-on-surface-variant">
         ⌘K
