@@ -1,11 +1,32 @@
 const express = require("express");
 const createResourceRoutes = require("./resourceRoutes");
+const authRoutes = require("./authRoutes");
 const feederCalculationRoutes = require("./feederCalculationRoutes");
 const workflowRoutes = require("./workflowRoutes");
 const models = require("../models");
+const requireAuth = require("../middleware/requireAuth");
 const { recordEvent } = require("../services/historyService");
 
 const router = express.Router();
+
+// Inscription/connexion : seules routes accessibles sans jeton. Tout le reste exige un compte (req.userId),
+// c'est ce qui permet de délimiter l'espace Bureau d'Études de chacun.
+router.use(authRoutes);
+router.use(requireAuth);
+
+// Un utilisateur ne doit pouvoir lister/créer des armoires que sous l'un de ses propres projets — sans ce
+// contrôle, connaître l'identifiant d'un projet suffirait à voir ou modifier les armoires d'un autre compte.
+async function requireOwnedProject(req, res, next) {
+  const projectId = req.method === "GET" ? req.query.projectId : req.body.projectId;
+  if (!projectId) return next();
+  try {
+    const owned = await models.Project.exists({ _id: projectId, owner: req.userId });
+    if (!owned) return res.status(404).json({ message: "Projet introuvable" });
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
 
 // Routes spécifiques (départs/calculs, puis suite du workflow) montées avant le CRUD générique.
 router.use(feederCalculationRoutes);
@@ -17,6 +38,7 @@ router.use(workflowRoutes);
 const resources = {
   Project: {
     path: "projects",
+    options: { ownerField: "owner" },
     hooks: {
       afterCreate: (project) =>
         recordEvent({
@@ -30,6 +52,7 @@ const resources = {
   },
   Cabinet: {
     path: "cabinets",
+    middleware: [requireOwnedProject],
     hooks: {
       afterCreate: (cabinet) =>
         recordEvent({
@@ -47,8 +70,8 @@ const resources = {
   Component: { path: "components" },
 };
 
-Object.entries(resources).forEach(([modelName, { path, hooks }]) => {
-  router.use(`/${path}`, createResourceRoutes(models[modelName], hooks));
+Object.entries(resources).forEach(([modelName, { path, hooks, options, middleware = [] }]) => {
+  router.use(`/${path}`, ...middleware, createResourceRoutes(models[modelName], hooks, options));
 });
 
 module.exports = router;

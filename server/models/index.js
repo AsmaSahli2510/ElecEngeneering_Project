@@ -1,4 +1,5 @@
 module.exports = {
+  User: require("./User"),
   Project: require("./Project"),
   Cabinet: require("./Cabinet"),
   Feeder: require("./Feeder"),

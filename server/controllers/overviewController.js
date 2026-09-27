@@ -18,9 +18,9 @@ const { HttpError, handle, isValidId } = require("../utils/http");
 const time = (value) => (value ? new Date(value).getTime() : 0);
 const OPEN_TICKET_STATUSES = ["reported", "assigned", "in_progress"];
 
-async function findProject(projectId) {
+async function findProject(projectId, ownerId) {
   if (!isValidId(projectId)) throw new HttpError(400, "Identifiant de projet invalide");
-  const project = await Project.findById(projectId);
+  const project = await Project.findOne({ _id: projectId, owner: ownerId });
   if (!project) throw new HttpError(404, "Projet introuvable");
   return project;
 }
@@ -81,7 +81,7 @@ function buildCabinetOverview({ cabinet, feeders, calculations, balance, mainFee
 
 // Vue agrégée d'un projet : une seule requête alimente le stepper du workflow et la vue globale du projet.
 const overview = handle(async (req, res) => {
-  const project = await findProject(req.params.projectId);
+  const project = await findProject(req.params.projectId, req.userId);
   const cabinet = await Cabinet.findOne({ projectId: project._id }).sort({ createdAt: 1 });
   if (!cabinet) {
     return res.json({ project, cabinet: null, eventsCount: await HistoryEvent.countDocuments({ projectId: project._id }) });
@@ -112,7 +112,7 @@ const overview = handle(async (req, res) => {
 // (filtres `$in`) au lieu d'un aller-retour par projet : alimente les listes (page Projets, tableau de bord)
 // sans déclencher un appel réseau par ligne.
 const summaries = handle(async (req, res) => {
-  const projects = await Project.find().sort({ createdAt: -1 });
+  const projects = await Project.find({ owner: req.userId }).sort({ createdAt: -1 });
   const projectIds = projects.map((project) => project._id);
   if (projectIds.length === 0) return res.json([]);
 
@@ -200,7 +200,7 @@ const summaries = handle(async (req, res) => {
 // Historique du projet puis de l'actif (chronologique). Les événements viennent du journal alimenté par le
 // système ; la prochaine maintenance préventive est ajoutée comme événement « planifié » calculé à la volée.
 const history = handle(async (req, res) => {
-  const project = await findProject(req.params.projectId);
+  const project = await findProject(req.params.projectId, req.userId);
   const events = (await HistoryEvent.find({ projectId: project._id }).sort({ date: 1, createdAt: 1 })).map((event) => event.toObject());
 
   const asset = await Asset.findOne({ projectId: project._id });

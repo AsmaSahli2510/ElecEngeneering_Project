@@ -1,11 +1,18 @@
 // hooks.afterCreate(document) : effet de bord après une création réussie (ex. événement d'historique).
-function createResourceController(Model, hooks = {}) {
+// options.ownerField : nom du champ (ex. "owner") qui délimite l'espace du compte connecté sur ce modèle —
+// injecté à la création, exigé sur toute lecture/modification/suppression. Absent pour les ressources qui n'ont
+// pas leur propre notion de propriétaire (elles restent accessibles telles quelles, comme avant).
+function createResourceController(Model, hooks = {}, options = {}) {
+  const { ownerField } = options;
+  const scope = (req) => (ownerField ? { [ownerField]: req.userId } : {});
+
   return {
     list: async (req, res, next) => {
       try {
-        const filter = Object.fromEntries(
-          Object.entries(req.query).filter(([, value]) => value),
-        );
+        const filter = {
+          ...Object.fromEntries(Object.entries(req.query).filter(([, value]) => value)),
+          ...scope(req),
+        };
         const documents = await Model.find(filter).sort({ createdAt: -1 });
         res.json(documents);
       } catch (error) {
@@ -14,7 +21,7 @@ function createResourceController(Model, hooks = {}) {
     },
     getById: async (req, res, next) => {
       try {
-        const document = await Model.findById(req.params.id);
+        const document = await Model.findOne({ _id: req.params.id, ...scope(req) });
         if (!document)
           return res.status(404).json({ message: "Resource not found" });
         res.json(document);
@@ -24,7 +31,7 @@ function createResourceController(Model, hooks = {}) {
     },
     create: async (req, res, next) => {
       try {
-        const document = await Model.create(req.body);
+        const document = await Model.create({ ...req.body, ...scope(req) });
         await hooks.afterCreate?.(document);
         res.status(201).json(document);
       } catch (error) {
@@ -33,8 +40,8 @@ function createResourceController(Model, hooks = {}) {
     },
     update: async (req, res, next) => {
       try {
-        const document = await Model.findByIdAndUpdate(
-          req.params.id,
+        const document = await Model.findOneAndUpdate(
+          { _id: req.params.id, ...scope(req) },
           req.body,
           { new: true, runValidators: true },
         );
@@ -47,7 +54,7 @@ function createResourceController(Model, hooks = {}) {
     },
     remove: async (req, res, next) => {
       try {
-        const document = await Model.findByIdAndDelete(req.params.id);
+        const document = await Model.findOneAndDelete({ _id: req.params.id, ...scope(req) });
         if (!document)
           return res.status(404).json({ message: "Resource not found" });
         res.status(204).send();

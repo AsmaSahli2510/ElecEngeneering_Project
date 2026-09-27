@@ -1,7 +1,18 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { navigation } from "../../data/navigation.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 function Sidebar({ collapsed, onToggle }) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const email = user?.email ?? "";
+  const initials = email.slice(0, 2).toUpperCase() || "??";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <aside
       className={`fixed left-0 top-0 z-50 print:hidden flex h-screen select-none flex-col bg-primary-container text-surface-bright shadow-[2px_0_12px_rgba(7,21,37,0.18)] transition-[width] duration-300 ${collapsed ? "w-[72px]" : "w-72"}`}>
@@ -82,16 +93,16 @@ function Sidebar({ collapsed, onToggle }) {
           <div className="flex min-w-0 items-center gap-space-md">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary-container text-on-secondary-container">
               <span className="font-tech-data-md text-tech-data-md font-bold uppercase">
-                AE
+                {initials}
               </span>
             </div>
             {!collapsed && (
               <div className="min-w-0">
                 <div className="truncate text-[13px] font-semibold leading-4 text-surface-bright">
-                  Asma Engineer
+                  {email || "Compte"}
                 </div>
                 <div className="truncate text-[10px] leading-3 text-on-primary-container">
-                  Lead Bureau d'Études
+                  Bureau d'Études
                 </div>
               </div>
             )}
@@ -108,6 +119,7 @@ function Sidebar({ collapsed, onToggle }) {
               </NavLink>
               <button
                 className="rounded p-space-xs text-primary-fixed-dim hover:text-error"
+                onClick={handleLogout}
                 type="button"
                 aria-label="Log out">
                 <span className="material-symbols-outlined text-[18px]">

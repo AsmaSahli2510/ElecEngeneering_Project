@@ -1,9 +1,9 @@
 const express = require("express");
 const createResourceController = require("../controllers/resourceController");
 
-function createResourceRoutes(Model, hooks) {
+function createResourceRoutes(Model, hooks, options) {
   const router = express.Router();
-  const controller = createResourceController(Model, hooks);
+  const controller = createResourceController(Model, hooks, options);
 
   router.get("/", controller.list);
   router.get("/:id", controller.getById);

@@ -18,9 +18,12 @@ const DB_URI = `${process.env.MONGO_TEST_URI || "mongodb://127.0.0.1:27017/elec-
 let server;
 let base;
 let engines;
+let authToken;
 
 async function call(method, url, body) {
-  const response = await fetch(base + url, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  const headers = { "Content-Type": "application/json" };
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
+  const response = await fetch(base + url, { method, headers, body: body ? JSON.stringify(body) : undefined });
   const text = await response.text();
   return { status: response.status, body: text ? JSON.parse(text) : null };
 }
@@ -39,6 +42,12 @@ before(async () => {
     load("quotation/index.js"),
   ]);
   engines = { calculation, balance, mainFeeder, bom, quotation };
+
+  // Toutes les routes (sauf /auth/*) exigent un compte connecté : chaque projet créé ci-dessous appartient à
+  // ce compte de test, exactement comme un utilisateur réel aurait son propre espace Bureau d'Études.
+  const registered = await call("POST", "/auth/register", { email: "test.be@elecproject.tn", password: "motdepasse123", confirmPassword: "motdepasse123" });
+  assert.equal(registered.status, 201, JSON.stringify(registered.body));
+  authToken = registered.body.token;
 });
 
 after(async () => {

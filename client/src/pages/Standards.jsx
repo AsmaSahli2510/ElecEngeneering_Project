@@ -19,7 +19,13 @@ function Standards() {
       families: section.families
         .map((fam) => ({
           ...fam,
-          rows: fam.title.toLowerCase().includes(query) ? fam.rows : fam.rows.filter((row) => siameRowLabel(fam, row).toLowerCase().includes(query)),
+          rows: fam.title.toLowerCase().includes(query)
+            ? fam.rows
+            : fam.rows.filter(
+                (row) =>
+                  siameRowLabel(fam, row).toLowerCase().includes(query) ||
+                  row.reference.toLowerCase().includes(query),
+              ),
         }))
         .filter((fam) => fam.rows.length > 0),
     })).filter((section) => section.families.length > 0)
@@ -50,7 +56,7 @@ function Standards() {
 
       <SearchInput
         onChange={(event) => setSearch(event.target.value)}
-        placeholder="Rechercher une désignation, un calibre (ex. 63A), une famille (EP60, Hti, sectionneur)..."
+        placeholder="Rechercher une référence, une désignation, un calibre (ex. 63A), une famille (EP60, Hti, sectionneur)..."
         value={search}
       />
 
@@ -74,6 +80,7 @@ function Standards() {
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="bg-surface-container-low font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
+                      <th className="px-space-md py-space-sm font-semibold">Référence</th>
                       <th className="px-space-md py-space-sm font-semibold">Désignation</th>
                       {fam.columns.map((col) => (
                         <th className="px-space-md py-space-sm text-right font-semibold" key={col}>
@@ -85,6 +92,9 @@ function Standards() {
                   <tbody className="divide-y divide-surface-container-low">
                     {fam.rows.map((row, index) => (
                       <tr className="font-body-sm text-body-sm text-on-surface" key={`${fam.id}-${index}`}>
+                        <td className="whitespace-nowrap px-space-md py-space-sm font-tech-data-md text-tech-data-md font-bold text-secondary">
+                          {row.reference}
+                        </td>
                         <td className="px-space-md py-space-sm font-medium">{siameRowLabel(fam, row)}</td>
                         <td className="px-space-md py-space-sm text-right font-tech-data-md text-tech-data-md">{formatMoney(row.priceC)}</td>
                         {fam.columns.length > 1 && (

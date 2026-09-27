@@ -24,8 +24,26 @@ function row(poles, ratingsA, priceC, priceAlt = null) {
   return { poles, ratingsA, priceC, priceAlt };
 }
 
+// Référence catalogue unique d'une ligne : identifiant de famille + pôles + calibres, ex.
+// « SIAME-EP60-6-10KA-2P-10-16-20-25A ». Le couple (pôles, calibres) est unique au sein d'une famille et
+// l'identifiant de famille l'est sur tout le catalogue, donc la référence l'est aussi, sans registre à tenir à jour.
+function referenceFor(familyId, r) {
+  const polesPart = r.poles ? `${r.poles}P` : "1PN";
+  const ratingsPart = `${r.ratingsA.join("-")}A`;
+  return `SIAME-${familyId.toUpperCase()}-${polesPart}-${ratingsPart}`;
+}
+
 function family({ id, title, standard, icuKa, deviceLabel, labelStyle = "word", columns, rows }) {
-  return { id, title, standard, icuKa, deviceLabel, labelStyle, columns, rows };
+  return {
+    id,
+    title,
+    standard,
+    icuKa,
+    deviceLabel,
+    labelStyle,
+    columns,
+    rows: rows.map((r) => ({ ...r, reference: referenceFor(id, r) })),
+  };
 }
 
 // ---------------------------------------------------------------------------------------------------------------

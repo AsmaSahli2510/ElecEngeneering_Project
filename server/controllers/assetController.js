@@ -3,12 +3,16 @@ const { recordEvent } = require("../services/historyService");
 const { formatId, nextSequence } = require("../services/sequenceService");
 const { addMonths } = require("../utils/dates");
 const { HttpError, handle, isValidId, pick } = require("../utils/http");
+const { getOwnedProjectIds } = require("../utils/ownership");
 
 const OPEN_TICKET_STATUSES = ["reported", "assigned", "in_progress"];
 
 // L'actif est identifié dans les URL par son identifiant métier (ACT-2026-001), pas par l'_id MongoDB.
-async function findAsset(assetId) {
-  const asset = await Asset.findOne({ assetId });
+// `ownerId` restreint la recherche aux projets du compte connecté : un identifiant d'un autre compte, même
+// deviné, répond « introuvable » comme s'il n'existait pas.
+async function findAsset(assetId, ownerId) {
+  const ownedProjectIds = await getOwnedProjectIds(ownerId);
+  const asset = await Asset.findOne({ assetId, projectId: { $in: ownedProjectIds } });
   if (!asset) throw new HttpError(404, `Actif ${assetId} introuvable`);
   return asset;
 }
@@ -46,19 +50,20 @@ async function describeAssets(assets) {
 }
 
 const listAssets = handle(async (req, res) => {
-  const assets = await Asset.find().sort({ createdAt: -1 });
+  const ownedProjectIds = await getOwnedProjectIds(req.userId);
+  const assets = await Asset.find({ projectId: { $in: ownedProjectIds } }).sort({ createdAt: -1 });
   res.json(await describeAssets(assets));
 });
 
 const getAsset = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const [details] = await describeAssets([asset]);
   res.json(details);
 });
 
 // Garantie et statut : le début de garantie suit la date d'installation et n'est pas modifiable.
 const updateAsset = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const { status, warranty } = req.body ?? {};
   if (status) asset.status = status;
   if (warranty?.partsEnd) asset.warranty.partsEnd = new Date(warranty.partsEnd);
@@ -73,7 +78,7 @@ const updateAsset = handle(async (req, res) => {
 // ---------- Maintenance préventive ----------
 
 const getMaintenance = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const plan = await Maintenance.findOne({ assetId: asset._id });
   if (!plan) return res.status(204).send();
   res.json(plan);
@@ -81,7 +86,7 @@ const getMaintenance = handle(async (req, res) => {
 
 // Définit ou modifie le plan. Prochaine date = dernière intervention (sinon date d'installation) + fréquence.
 const putMaintenancePlan = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const { frequencyMonths, technician } = req.body ?? {};
   const existing = await Maintenance.findOne({ assetId: asset._id });
   const baseDate = lastInterventionDate(existing) ?? asset.installationDate;
@@ -104,7 +109,7 @@ const putMaintenancePlan = handle(async (req, res) => {
 const INTERVENTION_LABELS = { preventive: "Maintenance préventive", corrective: "Maintenance corrective", inspection: "Contrôle" };
 
 const addIntervention = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const plan = await Maintenance.findOne({ assetId: asset._id });
   if (!plan) throw new HttpError(409, "Définissez d'abord le plan de maintenance préventive de cet actif");
 
@@ -129,7 +134,8 @@ const addIntervention = handle(async (req, res) => {
 });
 
 const listMaintenancePlans = handle(async (req, res) => {
-  const plans = await Maintenance.find().sort({ nextDate: 1 });
+  const ownedProjectIds = await getOwnedProjectIds(req.userId);
+  const plans = await Maintenance.find({ projectId: { $in: ownedProjectIds } }).sort({ nextDate: 1 });
   const assets = await Asset.find({ _id: { $in: plans.map((plan) => plan.assetId) } });
   const assetMap = new Map(assets.map((asset) => [String(asset._id), asset]));
   res.json(plans.map((plan) => ({ ...plan.toObject(), asset: assetMap.get(String(plan.assetId)) ?? null })));
@@ -181,17 +187,18 @@ async function describeTickets(tickets) {
 }
 
 const listAssetTickets = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   res.json(await describeTickets(await Ticket.find({ assetId: asset._id }).sort({ reportedAt: -1 })));
 });
 
 const listTickets = handle(async (req, res) => {
-  const filter = req.query.status ? { status: req.query.status } : {};
+  const ownedProjectIds = await getOwnedProjectIds(req.userId);
+  const filter = { projectId: { $in: ownedProjectIds }, ...(req.query.status ? { status: req.query.status } : {}) };
   res.json(await describeTickets(await Ticket.find(filter).sort({ reportedAt: -1 })));
 });
 
 const createTicket = handle(async (req, res) => {
-  const asset = await findAsset(req.params.assetId);
+  const asset = await findAsset(req.params.assetId, req.userId);
   const data = pick(req.body, TICKET_FIELDS);
   const ticket = new Ticket({ ...data, assetId: asset._id, projectId: asset.projectId, reportedAt: data.reportedAt ?? new Date() });
   checkTicketRules(ticket);
@@ -204,7 +211,8 @@ const createTicket = handle(async (req, res) => {
 
 const updateTicket = handle(async (req, res) => {
   if (!isValidId(req.params.id)) throw new HttpError(400, "Identifiant de ticket invalide");
-  const ticket = await Ticket.findById(req.params.id);
+  const ownedProjectIds = await getOwnedProjectIds(req.userId);
+  const ticket = await Ticket.findOne({ _id: req.params.id, projectId: { $in: ownedProjectIds } });
   if (!ticket) throw new HttpError(404, "Ticket introuvable");
   const data = pick(req.body, TICKET_FIELDS);
   const { resolution, ...rest } = data;

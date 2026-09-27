@@ -1,12 +1,27 @@
+import { getToken } from './authToken.js'
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
+// Enregistré par AuthContext au montage : prévenu quand une requête revient 401 (jeton absent/expiré),
+// pour effacer la session côté client sans que ce module ait besoin de connaître React ou le routeur.
+let onUnauthorized = null
+export const setUnauthorizedHandler = (handler) => {
+  onUnauthorized = handler
+}
+
 async function request(path, options = {}) {
+  const token = getToken()
   const response = await fetch(`${API_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
     ...options,
   })
 
   if (!response.ok) {
+    if (response.status === 401) onUnauthorized?.()
     const body = await response.json().catch(() => ({}))
     const error = new Error(body.message || `Request failed: ${response.status}`)
     error.status = response.status
@@ -20,6 +35,11 @@ const json = (method, data) => ({ method, body: JSON.stringify(data) })
 
 // Les GET d'un document unique renvoient null (204) tant que rien n'est enregistré.
 export const api = {
+  auth: {
+    register: (data) => request('/auth/register', json('POST', data)),
+    login: (data) => request('/auth/login', json('POST', data)),
+    me: () => request('/auth/me'),
+  },
   projects: {
     list: () => request('/projects'),
     create: (data) => request('/projects', json('POST', data)),

@@ -12,6 +12,7 @@ import DepartsStep from "./pages/DepartsStep.jsx";
 import FeederCalculation from "./pages/FeederCalculation.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
 import InstallationPage from "./pages/InstallationPage.jsx";
+import Login from "./pages/Login.jsx";
 import Maintenance from "./pages/Maintenance.jsx";
 import MainFeederPage from "./pages/MainFeederPage.jsx";
 import NewProject from "./pages/NewProject.jsx";
@@ -21,6 +22,8 @@ import ProjectPickerPage from "./pages/ProjectPickerPage.jsx";
 import Projects from "./pages/Projects.jsx";
 import QrCodes from "./pages/QrCodes.jsx";
 import QuotationPage from "./pages/QuotationPage.jsx";
+import RequireAuth from "./components/layout/RequireAuth.jsx";
+import Register from "./pages/Register.jsx";
 import Settings from "./pages/Settings.jsx";
 import Standards from "./pages/Standards.jsx";
 import Tickets from "./pages/Tickets.jsx";
@@ -34,54 +37,58 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="projects/new" element={<NewProject />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<AppLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="projects/new" element={<NewProject />} />
 
-          <Route path="projects/:projectId" element={<ProjectOverview />} />
-          <Route path="projects/:projectId/cabinet" element={<CabinetStep />} />
-          <Route path="projects/:projectId/history" element={<HistoryPage />} />
-          <Route path="projects/:projectId/cabinets/:cabinetId/feeders" element={<DepartsStep />} />
-          <Route
-            path="projects/:projectId/cabinets/:cabinetId/feeders/:feederId/calculation"
-            element={<FeederCalculation />}
-          />
-          <Route path="projects/:projectId/cabinets/:cabinetId/balance" element={<PowerBalancePage />} />
-          <Route path="projects/:projectId/cabinets/:cabinetId/main-feeder" element={<MainFeederPage />} />
-          <Route path="projects/:projectId/cabinets/:cabinetId/bom" element={<BomPage />} />
-          <Route path="projects/:projectId/cabinets/:cabinetId/quotation" element={<QuotationPage />} />
-          <Route path="projects/:projectId/cabinets/:cabinetId/installation" element={<InstallationPage />} />
+            <Route path="projects/:projectId" element={<ProjectOverview />} />
+            <Route path="projects/:projectId/cabinet" element={<CabinetStep />} />
+            <Route path="projects/:projectId/history" element={<HistoryPage />} />
+            <Route path="projects/:projectId/cabinets/:cabinetId/feeders" element={<DepartsStep />} />
+            <Route
+              path="projects/:projectId/cabinets/:cabinetId/feeders/:feederId/calculation"
+              element={<FeederCalculation />}
+            />
+            <Route path="projects/:projectId/cabinets/:cabinetId/balance" element={<PowerBalancePage />} />
+            <Route path="projects/:projectId/cabinets/:cabinetId/main-feeder" element={<MainFeederPage />} />
+            <Route path="projects/:projectId/cabinets/:cabinetId/bom" element={<BomPage />} />
+            <Route path="projects/:projectId/cabinets/:cabinetId/quotation" element={<QuotationPage />} />
+            <Route path="projects/:projectId/cabinets/:cabinetId/installation" element={<InstallationPage />} />
 
-          <Route path="assets" element={<Assets />} />
-          <Route path="assets/:assetId" element={<AssetPage />} />
-          <Route path="assets/:assetId/details" element={<AssetDetailsPage />} />
-          <Route path="assets/:assetId/maintenance" element={<AssetMaintenancePage />} />
-          <Route path="assets/:assetId/tickets" element={<AssetTicketsPage />} />
-          <Route path="qr-codes" element={<QrCodes />} />
-          <Route path="maintenance" element={<Maintenance />} />
-          <Route path="tickets" element={<Tickets />} />
+            <Route path="assets" element={<Assets />} />
+            <Route path="assets/:assetId" element={<AssetPage />} />
+            <Route path="assets/:assetId/details" element={<AssetDetailsPage />} />
+            <Route path="assets/:assetId/maintenance" element={<AssetMaintenancePage />} />
+            <Route path="assets/:assetId/tickets" element={<AssetTicketsPage />} />
+            <Route path="qr-codes" element={<QrCodes />} />
+            <Route path="maintenance" element={<Maintenance />} />
+            <Route path="tickets" element={<Tickets />} />
 
-          {/* Entrées de menu « ingénierie » : ces modules font partie du cycle d'un projet, on choisit donc d'abord le projet. */}
-          <Route
-            path="cabinet-configurator"
-            element={<ProjectPickerPage description="La configuration de l'armoire est la 2e étape du cycle de vie d'un projet." title="Configurateur d'armoire" />}
-          />
-          <Route
-            path="cable-sizing"
-            element={<ProjectPickerPage description="Le câble fait partie du calcul de chaque départ : ouvrez un projet, puis « Calculer » sur le départ voulu." title="Dimensionnement des câbles" />}
-          />
-          <Route
-            path="power-balance"
-            element={<ProjectPickerPage description="Le bilan se construit automatiquement à partir des départs calculés d'un projet." title="Bilan de puissance" />}
-          />
-          <Route
-            path="bom-quotation"
-            element={<ProjectPickerPage description="La nomenclature et le devis sont générés depuis les calculs d'un projet." title="Nomenclature et devis" />}
-          />
-          <Route path="standards" element={<Standards />} />
-          <Route path="settings" element={<Settings />} />
+            {/* Entrées de menu « ingénierie » : ces modules font partie du cycle d'un projet, on choisit donc d'abord le projet. */}
+            <Route
+              path="cabinet-configurator"
+              element={<ProjectPickerPage description="La configuration de l'armoire est la 2e étape du cycle de vie d'un projet." title="Configurateur d'armoire" />}
+            />
+            <Route
+              path="cable-sizing"
+              element={<ProjectPickerPage description="Le câble fait partie du calcul de chaque départ : ouvrez un projet, puis « Calculer » sur le départ voulu." title="Dimensionnement des câbles" />}
+            />
+            <Route
+              path="power-balance"
+              element={<ProjectPickerPage description="Le bilan se construit automatiquement à partir des départs calculés d'un projet." title="Bilan de puissance" />}
+            />
+            <Route
+              path="bom-quotation"
+              element={<ProjectPickerPage description="La nomenclature et le devis sont générés depuis les calculs d'un projet." title="Nomenclature et devis" />}
+            />
+            <Route path="standards" element={<Standards />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

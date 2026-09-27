@@ -15,15 +15,12 @@ function Dashboard() {
         <div>
           <div className="flex items-center gap-space-xs font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">
             <span className="h-2 w-2 rounded-full bg-secondary" />
-            Operational Workspace • Site Supervision Desk
+            Operational Workspace
           </div>
           <h1 className="mt-space-2xs font-headline-lg text-headline-lg tracking-tight text-on-surface">
-            Good morning Asma — Engineering workspace overview
+            Engineering workspace overview
           </h1>
-          <p className="mt-space-2xs font-body-sm text-body-sm text-on-surface-variant">
-            Current standard compliance: NF C 15-100 Amendment 5 • IEC
-            60364-5-52 • Active electrical nodes: {m(data?.cabinetsTotal ?? 0)}
-          </p>
+
         </div>
         <div className="flex shrink-0 items-center gap-space-sm self-start md:self-auto">
           <button
