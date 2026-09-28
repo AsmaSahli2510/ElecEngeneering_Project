@@ -5,7 +5,7 @@ const { HttpError, handle } = require("../utils/http");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
 
-const publicUser = (user) => ({ id: user._id, email: user.email });
+const publicUser = (user) => ({ id: user._id, email: user.email, onboardingDone: Boolean(user.onboardingDone) });
 
 // Inscription : e-mail + mot de passe + confirmation, rien de plus (compte simple). Chaque compte obtient
 // ensuite son propre espace projets — voir `owner` sur le modèle Project et le middleware requireAuth.
@@ -43,4 +43,11 @@ const me = handle(async (req, res) => {
   res.json(publicUser(user));
 });
 
-module.exports = { register, login, me };
+// Marque le guide de bienvenue comme vu (done: true) ou à revoir (done: false).
+const onboarding = handle(async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.userId, { onboardingDone: req.body?.done !== false }, { new: true });
+  if (!user) throw new HttpError(401, "Session invalide ou expirée");
+  res.json(publicUser(user));
+});
+
+module.exports = { register, login, me, onboarding };

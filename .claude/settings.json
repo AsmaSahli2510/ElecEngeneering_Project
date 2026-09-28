@@ -13,7 +13,14 @@
       "Bash(sed -i \"/^export { Link }$/d\" AssetPage.jsx)",
       "Bash(sed -i \"s/import { Link, useLocation, useParams } from 'react-router-dom'/import { useLocation, useParams } from 'react-router-dom'/\" AssetPage.jsx)",
       "Bash(sed -i 's/function Notice\\({ tone = \"info\", title, children, actions, className = \"\" }\\) {/function Notice\\({ tone = \"info\", title, children, actions, className = \"\", ...rest }\\) {/' Notice.jsx)",
-      "Bash(sed -i 's/      role={tone === \"error\" ? \"alert\" : \"status\"}>/      role={tone === \"error\" ? \"alert\" : \"status\"}\\\\n      {...rest}>/' Notice.jsx)"
+      "Bash(sed -i 's/      role={tone === \"error\" ? \"alert\" : \"status\"}>/      role={tone === \"error\" ? \"alert\" : \"status\"}\\\\n      {...rest}>/' Notice.jsx)",
+      "Bash(npm run *)",
+      "Bash(mkdir -p __TRACKED_VAR__/shot)",
+      "Bash(npm init *)",
+      "Bash(npm i *)",
+      "Bash(rm -f *.png)",
+      "Bash(node shoot.cjs dark 3)",
+      "Bash(node shoot.cjs light 1 2300)"
     ]
   }
 }

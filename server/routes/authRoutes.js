@@ -7,5 +7,6 @@ const router = express.Router();
 router.post("/auth/register", auth.register);
 router.post("/auth/login", auth.login);
 router.get("/auth/me", requireAuth, auth.me);
+router.patch("/auth/onboarding", requireAuth, auth.onboarding);
 
 module.exports = router;

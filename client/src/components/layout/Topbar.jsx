@@ -9,7 +9,7 @@ import StatusPill from "../ui/StatusPill.jsx";
 
 const NAV_ITEMS = navigation.flatMap((group) => group.items);
 
-function Topbar({ sidebarCollapsed }) {
+function Topbar({ sidebarCollapsed, onHelp }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { projects } = useProjectsWithProgress();
@@ -156,6 +156,15 @@ function Topbar({ sidebarCollapsed }) {
               </div>
             )}
           </div>
+
+          <button
+            aria-label="Guide de l'application"
+            className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container"
+            onClick={onHelp}
+            title="Revoir le guide de l'application"
+            type="button">
+            <span className="material-symbols-outlined text-[20px]">help</span>
+          </button>
 
           <div className="relative" ref={notifRef}>
             <button

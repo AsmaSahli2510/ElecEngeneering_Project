@@ -53,7 +53,17 @@ export function AuthProvider({ children }) {
     setStatus("unauthenticated");
   };
 
-  const value = useMemo(() => ({ user, status, login, register, logout }), [user, status]);
+  // Guide de bienvenue : mis à jour localement tout de suite (le guide se ferme sans attendre le réseau),
+  // puis mémorisé sur le compte pour ne plus s'afficher, quel que soit le navigateur.
+  const setOnboardingDone = (done) => {
+    setUser((current) => (current ? { ...current, onboardingDone: done } : current));
+    api.auth.setOnboarding(done).catch(() => {});
+  };
+
+  const value = useMemo(
+    () => ({ user, status, login, register, logout, setOnboardingDone }),
+    [user, status],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

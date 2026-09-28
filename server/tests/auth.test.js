@@ -94,6 +94,20 @@ describe("authentification et espaces par compte", () => {
     assert.equal(bobProject.status, 201, JSON.stringify(bobProject.body));
   });
 
+  it("guide de bienvenue : non vu à l'inscription, puis mémorisé sur le compte", async () => {
+    const registered = await call("POST", "/auth/register", { email: "dave@elecproject.tn", password: "motdepasse1", confirmPassword: "motdepasse1" });
+    const token = registered.body.token;
+    assert.equal(registered.body.user.onboardingDone, false);
+
+    assert.equal((await call("PATCH", "/auth/onboarding", { done: true }, token)).body.onboardingDone, true);
+    assert.equal((await call("GET", "/auth/me", undefined, token)).body.onboardingDone, true);
+    const login = await call("POST", "/auth/login", { email: "dave@elecproject.tn", password: "motdepasse1" });
+    assert.equal(login.body.user.onboardingDone, true);
+
+    assert.equal((await call("PATCH", "/auth/onboarding", { done: false }, token)).body.onboardingDone, false);
+    assert.equal((await call("PATCH", "/auth/onboarding", { done: true })).status, 401);
+  });
+
   it("la référence de projet est attribuée automatiquement : PROJ-<année>-001, puis 002, ... par compte", async () => {
     const carol = (await call("POST", "/auth/register", { email: "carol@elecproject.tn", password: "motdepasse1", confirmPassword: "motdepasse1" })).body.token;
     const year = new Date().getUTCFullYear();

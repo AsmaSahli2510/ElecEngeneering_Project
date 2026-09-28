@@ -1,3 +1,4 @@
+import { useOutletContext } from "react-router-dom";
 import SectionCard from "../components/ui/SectionCard.jsx";
 import { useTheme } from "../hooks/useTheme.js";
 
@@ -8,6 +9,7 @@ const THEMES = [
 
 function Settings() {
   const { theme, setTheme } = useTheme();
+  const { openTour } = useOutletContext();
 
   return (
     <div className="flex w-full flex-col gap-space-lg pb-8">
@@ -39,7 +41,15 @@ function Settings() {
         </div>
       </SectionCard>
 
-
+      <SectionCard icon="school" subtitle="Les étapes de l'application, en mini-écrans animés" title="Guide de bienvenue">
+        <button
+          className="flex h-10 items-center gap-space-xs rounded-lg bg-secondary px-space-lg font-body-sm text-body-sm font-bold text-on-secondary hover:bg-secondary-container"
+          onClick={openTour}
+          type="button">
+          <span className="material-symbols-outlined text-[18px]">play_circle</span>
+          Revoir le guide
+        </button>
+      </SectionCard>
     </div>
   );
 }

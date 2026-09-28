@@ -137,3 +137,36 @@
 }
 
 #root { min-height: 100vh; }
+
+/* Guide de bienvenue (components/onboarding) : animations des mini-écrans. */
+@keyframes onb-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes onb-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes onb-slide { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes onb-enter { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes onb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes onb-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(49, 107, 243, 0.55); }
+  70% { box-shadow: 0 0 0 10px rgba(49, 107, 243, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(49, 107, 243, 0); }
+}
+@keyframes onb-nudge-x { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+@keyframes onb-nudge-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes onb-ripple { from { opacity: 0.7; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(1.6); } }
+@keyframes onb-wipe { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes onb-blink { 50% { opacity: 0; } }
+
+.onb-pop { animation: onb-pop 380ms cubic-bezier(0.2, 0.9, 0.3, 1.35) both; }
+.onb-rise { animation: onb-rise 360ms ease-out both; }
+.onb-slide { animation: onb-slide 380ms ease-out both; }
+.onb-enter { animation: onb-enter 320ms ease-out both; }
+.onb-fade { animation: onb-fade 300ms ease-out both; }
+.onb-pulse { animation: onb-pulse 1.2s ease-out infinite; }
+.onb-nudge-x { animation: onb-nudge-x 900ms ease-in-out infinite; }
+.onb-nudge-y { animation: onb-nudge-y 900ms ease-in-out infinite; }
+.onb-ripple { animation: onb-ripple 450ms ease-out both; }
+.onb-wipe { animation: onb-wipe 900ms ease-out both; }
+.onb-caret { animation: onb-blink 900ms step-end infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="onb-"] { animation: none !important; transition: none !important; }
+}

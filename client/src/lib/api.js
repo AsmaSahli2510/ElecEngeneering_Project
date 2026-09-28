@@ -39,6 +39,7 @@ export const api = {
     register: (data) => request('/auth/register', json('POST', data)),
     login: (data) => request('/auth/login', json('POST', data)),
     me: () => request('/auth/me'),
+    setOnboarding: (done) => request('/auth/onboarding', json('PATCH', { done })),
   },
   projects: {
     list: () => request('/projects'),
