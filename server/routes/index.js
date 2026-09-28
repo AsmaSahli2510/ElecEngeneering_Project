@@ -6,6 +6,7 @@ const workflowRoutes = require("./workflowRoutes");
 const models = require("../models");
 const requireAuth = require("../middleware/requireAuth");
 const { recordEvent } = require("../services/historyService");
+const { assignReference } = require("../controllers/projectController");
 
 const router = express.Router();
 
@@ -40,6 +41,7 @@ const resources = {
     path: "projects",
     options: { ownerField: "owner" },
     hooks: {
+      beforeCreate: assignReference,
       afterCreate: (project) =>
         recordEvent({
           projectId: project._id,

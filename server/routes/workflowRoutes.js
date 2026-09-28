@@ -3,6 +3,7 @@ const assets = require("../controllers/assetController");
 const dashboard = require("../controllers/dashboardController");
 const installation = require("../controllers/installationController");
 const overview = require("../controllers/overviewController");
+const project = require("../controllers/projectController");
 const quotation = require("../controllers/quotationController");
 const stage = require("../controllers/stageController");
 
@@ -12,6 +13,7 @@ const router = express.Router();
 
 // Montée avant /projects/:projectId/... : évite que "summary" ne soit jamais interprété comme un identifiant.
 router.get("/projects/summary", overview.summaries);
+router.get("/projects/next-reference", project.nextReference);
 router.get("/projects/:projectId/overview", overview.overview);
 router.get("/projects/:projectId/history", overview.history);
 

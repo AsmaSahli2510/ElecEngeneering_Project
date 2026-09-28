@@ -43,6 +43,8 @@ export const api = {
   projects: {
     list: () => request('/projects'),
     create: (data) => request('/projects', json('POST', data)),
+    // Référence proposée (PROJ-2026-001, ...) : la référence définitive est attribuée par le serveur à la création.
+    nextReference: () => request('/projects/next-reference'),
     get: (id) => request(`/projects/${id}`),
     // Vue agrégée : alimente le stepper du workflow et la vue globale du projet.
     overview: (id) => request(`/projects/${id}/overview`),

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NewProjectStepper from "../components/projects/NewProjectStepper.jsx";
 import ProjectContextCard from "../components/projects/ProjectContextCard.jsx";
@@ -10,7 +10,7 @@ import { api } from "../lib/api.js";
 
 const initialProject = {
   name: "Extension atelier de production",
-  reference: "PROJ-2026-001",
+  reference: "",
   client: "ABC Industrie",
   installationSite: "Usine Tunis",
   siteAddress: "Ben Arous, Tunis",
@@ -27,12 +27,19 @@ function NewProject() {
   const update = (field) => (event) =>
     setForm((current) => ({ ...current, [field]: event.target.value }));
 
+  // La référence est automatique (PROJ-2026-001, PROJ-2026-002, ...) : on affiche celle que le serveur attribuera.
+  useEffect(() => {
+    api.projects
+      .nextReference()
+      .then(({ reference }) => setForm((current) => ({ ...current, reference })))
+      .catch(() => {});
+  }, []);
+
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
     const missing = [
       ["name", "le nom du projet"],
-      ["reference", "la référence du projet"],
       ["client", "le client"],
       ["installationSite", "le site d'installation"],
     ].find(([field]) => !form[field].trim());
@@ -114,8 +121,10 @@ function NewProject() {
               label="Référence du projet"
               required>
               <input
-                className={`${formInputClass} font-tech-data-md font-bold`}
-                onChange={update("reference")}
+                className={`${formInputClass} cursor-not-allowed font-tech-data-md font-bold opacity-80`}
+                placeholder="Attribuée automatiquement"
+                readOnly
+                title="Référence attribuée automatiquement"
                 value={form.reference}
               />
             </FormField>

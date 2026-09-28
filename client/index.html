@@ -8,9 +8,7 @@
     <script>
       (function () {
         try {
-          var stored = localStorage.getItem('elec-theme');
-          var isDark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (isDark) document.documentElement.classList.add('dark');
+          if (localStorage.getItem('elec-theme') === 'dark') document.documentElement.classList.add('dark');
         } catch (e) {}
       })();
     </script>

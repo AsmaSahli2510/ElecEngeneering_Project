@@ -93,4 +93,18 @@ describe("authentification et espaces par compte", () => {
     const bobProject = await call("POST", "/projects", { name: "Projet de Bob", reference: "PROJ-ALICE-001", client: "Client B", installationSite: "Site B" }, bob);
     assert.equal(bobProject.status, 201, JSON.stringify(bobProject.body));
   });
+
+  it("la référence de projet est attribuée automatiquement : PROJ-<année>-001, puis 002, ... par compte", async () => {
+    const carol = (await call("POST", "/auth/register", { email: "carol@elecproject.tn", password: "motdepasse1", confirmPassword: "motdepasse1" })).body.token;
+    const year = new Date().getUTCFullYear();
+    const payload = { name: "Projet", client: "Client", installationSite: "Site" };
+
+    assert.equal((await call("GET", "/projects/next-reference", undefined, carol)).body.reference, `PROJ-${year}-001`);
+    // La référence envoyée par le client est ignorée.
+    const first = await call("POST", "/projects", { ...payload, reference: "SAISIE-LIBRE" }, carol);
+    assert.equal(first.body.reference, `PROJ-${year}-001`);
+    const second = await call("POST", "/projects", payload, carol);
+    assert.equal(second.body.reference, `PROJ-${year}-002`);
+    assert.equal((await call("GET", "/projects/next-reference", undefined, carol)).body.reference, `PROJ-${year}-003`);
+  });
 });

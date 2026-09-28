@@ -1,3 +1,4 @@
+// hooks.beforeCreate(data, req) : complète/modifie les données avant la création (ex. référence séquentielle).
 // hooks.afterCreate(document) : effet de bord après une création réussie (ex. événement d'historique).
 // options.ownerField : nom du champ (ex. "owner") qui délimite l'espace du compte connecté sur ce modèle —
 // injecté à la création, exigé sur toute lecture/modification/suppression. Absent pour les ressources qui n'ont
@@ -31,7 +32,9 @@ function createResourceController(Model, hooks = {}, options = {}) {
     },
     create: async (req, res, next) => {
       try {
-        const document = await Model.create({ ...req.body, ...scope(req) });
+        const data = { ...req.body, ...scope(req) };
+        await hooks.beforeCreate?.(data, req);
+        const document = await Model.create(data);
         await hooks.afterCreate?.(document);
         res.status(201).json(document);
       } catch (error) {

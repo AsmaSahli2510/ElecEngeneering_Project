@@ -1,13 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { THEME_STORAGE_KEY, ThemeContext } from "./theme-context.js";
 
-function getSystemTheme() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
+// Mode clair par défaut ; le mode sombre n'est appliqué que s'il a été choisi explicitement (Paramètres).
 function getInitialTheme() {
-  const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  return stored === "light" || stored === "dark" ? stored : getSystemTheme();
+  return localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
 }
 
 // Fournit le thème courant (clair/sombre) à toute l'application et le reflète sur
